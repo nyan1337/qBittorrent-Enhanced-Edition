@@ -5142,6 +5142,7 @@ void Session::handleExternalIPAlert(const lt::external_ip_alert *p)
     {
         if (isReannounceWhenAddressChangedEnabled() && !m_lastExternalIP.isEmpty())
             reannounceToAllTrackers();
+        globalExternalIP = externalIP;
         m_lastExternalIP = externalIP;
     }
 }

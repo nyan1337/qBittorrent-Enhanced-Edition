@@ -38,6 +38,9 @@
 inline const char C_TORRENT_FILE_EXTENSION[] = ".torrent";
 inline const int MAX_TORRENT_SIZE = 100 * 1024 * 1024; // 100 MiB
 
+// quick and dirty but works
+inline QString globalExternalIP = "";
+
 template <typename T>
 constexpr typename std::add_const_t<T> &asConst(T &t) noexcept { return t; }
 
