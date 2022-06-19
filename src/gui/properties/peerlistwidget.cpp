@@ -108,6 +108,7 @@ PeerListWidget::PeerListWidget(PropertiesWidget *parent)
     m_listModel->setHeaderData(PeerListColumns::TOT_UP, Qt::Horizontal, tr("Uploaded", "i.e: total data uploaded"));
     m_listModel->setHeaderData(PeerListColumns::RELEVANCE, Qt::Horizontal, tr("Relevance", "i.e: How relevant this peer is to us. How many pieces it has that we don't."));
     m_listModel->setHeaderData(PeerListColumns::DOWNLOADING_PIECE, Qt::Horizontal, tr("Files", "i.e. files that are being downloaded right now"));
+    m_listModel->setHeaderData(PeerListColumns::DOWNLOADING_PIECE_NUMBER, Qt::Horizontal, tr("Down Piece #", "i.e. piece number being downloaded"));
     // Set header text alignment
     m_listModel->setHeaderData(PeerListColumns::PORT, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     m_listModel->setHeaderData(PeerListColumns::PROGRESS, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
@@ -116,6 +117,7 @@ PeerListWidget::PeerListWidget(PropertiesWidget *parent)
     m_listModel->setHeaderData(PeerListColumns::TOT_DOWN, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     m_listModel->setHeaderData(PeerListColumns::TOT_UP, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     m_listModel->setHeaderData(PeerListColumns::RELEVANCE, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
+    m_listModel->setHeaderData(PeerListColumns::DOWNLOADING_PIECE_NUMBER, Qt::Horizontal, QVariant(Qt::AlignRight | Qt::AlignVCenter), Qt::TextAlignmentRole);
     // Proxy model to support sorting without actually altering the underlying model
     m_proxyModel = new PeerListSortModel(this);
     m_proxyModel->setDynamicSortFilter(true);
@@ -492,7 +494,16 @@ void PeerListWidget::updatePeer(const BitTorrent::Torrent *torrent, const BitTor
                 ? torrent->info().filesForPiece(peer.downloadingPieceIndex())
                 : QStringList()};
     const QString downloadingFilesDisplayValue = downloadingFiles.join(';');
+    LogMsg(QString(peer.downloadingPieceIndex()));
     setModelData(row, PeerListColumns::DOWNLOADING_PIECE, downloadingFilesDisplayValue, downloadingFilesDisplayValue, {}, downloadingFiles.join(QLatin1Char('\n')));
+    if (peer.downloadingPieceIndex() == -1)
+        setModelData(row, PeerListColumns::DOWNLOADING_PIECE_NUMBER
+                , "", "", {}, "No piece being transferred");
+    else
+        setModelData(row, PeerListColumns::DOWNLOADING_PIECE_NUMBER
+                , QString::number(peer.downloadingPieceIndex()), QString::number(peer.downloadingPieceIndex()), intDataTextAlignment, QString::number(peer.downloadingPieceIndex()));
+
+
 
     if (m_resolver)
         m_resolver->resolve(peerEndpoint.address.ip);
