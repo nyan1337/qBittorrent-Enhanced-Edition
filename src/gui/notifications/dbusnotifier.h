@@ -1,6 +1,7 @@
 /*
  * Bittorrent Client using Qt and libtorrent.
- * Copyright (C) 2021  Mike Tzou (Chocobo1)
+ * Copyright (C) 2022  Vladimir Golovnev <glassez@yandex.ru>
+ * Copyright (C) 2006  Christophe Dumez <chris@qbittorrent.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,20 +29,28 @@
 
 #pragma once
 
-#define QBT_VERSION_MAJOR 4
-#define QBT_VERSION_MINOR 4
-#define QBT_VERSION_BUGFIX 5
-#define QBT_VERSION_BUILD 10
-#define QBT_VERSION_STATUS ""  // Should be empty for stable releases!
+#include <QObject>
+#include <QSet>
 
-#define QBT__STRINGIFY(x) #x
-#define QBT_STRINGIFY(x) QBT__STRINGIFY(x)
+class DBusNotificationsInterface;
 
-#if (QBT_VERSION_BUILD != 0)
-#define PROJECT_VERSION QBT_STRINGIFY(QBT_VERSION_MAJOR.QBT_VERSION_MINOR.QBT_VERSION_BUGFIX.QBT_VERSION_BUILD) QBT_VERSION_STATUS
-#else
-#define PROJECT_VERSION QBT_STRINGIFY(QBT_VERSION_MAJOR.QBT_VERSION_MINOR.QBT_VERSION_BUGFIX) QBT_VERSION_STATUS
-#endif
+class DBusNotifier final : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY_MOVE(DBusNotifier)
 
-#define QBT_VERSION "v" PROJECT_VERSION
-#define QBT_VERSION_2 PROJECT_VERSION
+public:
+    explicit DBusNotifier(QObject *parent = nullptr);
+
+    void showMessage(const QString &title, const QString &message, int timeout);
+
+signals:
+    void messageClicked();
+
+private:
+    void onActionInvoked(uint messageID, const QString &action);
+    void onNotificationClosed(uint messageID, uint reason);
+
+    DBusNotificationsInterface *m_notificationsInterface = nullptr;
+    QSet<uint> m_activeMessages;
+};

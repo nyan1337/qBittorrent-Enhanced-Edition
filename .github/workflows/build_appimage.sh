@@ -12,7 +12,7 @@ set -o pipefail
 
 # match qt version prefix. E.g 5 --> 5.15.2, 5.12 --> 5.12.10
 export QT_VER_PREFIX="6"
-export LIBTORRENT_BRANCH="RC_2_0"
+export LIBTORRENT_BRANCH="RC_1_2"
 
 rm -f /etc/apt/sources.list.d/*.list*
 # Ubuntu mirror for local building
@@ -197,7 +197,6 @@ rm -fr CMakeCache.txt CMakeFiles
   -feature-optimize_full \
   -nomake examples \
   -nomake tests
-cat config.summary
 cmake --build . --parallel
 cmake --install .
 export QT_BASE_DIR="$(ls -rd /usr/local/Qt-* | head -1)"
@@ -225,6 +224,7 @@ cat config.summary
 cmake --build . --parallel
 cmake --install .
 
+# Remove qt-wayland until next release: https://bugreports.qt.io/browse/QTBUG-104318
 # qt-wayland
 if [ ! -f "/usr/src/qtwayland-${qt_ver}/.unpack_ok" ]; then
   qtwayland_url="https://download.qt.io/official_releases/qt/${qt_major_ver}/${qt_ver}/submodules/qtwayland-everywhere-src-${qt_ver}.tar.xz"
@@ -412,6 +412,9 @@ exclude_libs=(
   libmircore.so.1
   libmirprotobuf.so.3
   libmount.so.1
+  libpango-1.0.so.0
+  libpangocairo-1.0.so.0
+  libpangoft2-1.0.so.0
   libpixman-1.so.0
   libprotobuf-lite.so.9
   libselinux.so.1

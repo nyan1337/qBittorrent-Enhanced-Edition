@@ -48,10 +48,19 @@ Latest AppImage download: [qBittorrent-Enhanced-Edition-x86_64.AppImage](https:/
 
 #### Debian (Maintainer: [Kolcha](https://github.com/Kolcha))
 
-[release repo](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Atest&package=qbittorrent-enhanced)
-[nightly repo](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Aqbittorrent-nightly&package=qbittorrent-enhanced)
+##### Qt5 variants (Debian 11 and above):
 
-Note: 'nightly' repo **doesn't have Debian 10** builds!
+[GUI](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Atest&package=qbittorrent-enhanced)
+
+[nox](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Atest&package=qbittorrent-enhanced-nox)
+
+##### Qt6 variants (Debian Testing and above):
+
+[GUI](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Atest&package=qbittorrent-enhanced-qt6)
+
+[nox](https://software.opensuse.org//download.html?project=home%3Anikoneko%3Atest&package=qbittorrent-enhanced-nox-qt6)
+
+The one [repository](https://build.opensuse.org/project/show/home:nikoneko:test) contains all 4 variants listed above, links to specific packages are provided for convenience.
 
 #### openSUSE/RPM-based Linux distro (Maintainer: [PhoenixEmik](https://github.com/PhoenixEmik))
 
@@ -67,6 +76,12 @@ brew install c0re100-qbittorrent
 ```
 
 #### Windows
+
+Windows 10 & 11 (Maintainer: [c0re100](https://github.com/c0re100))
+
+```
+winget install c0re100.qBittorrent-Enhanced-Edition
+```
 
 Chocolatey (Maintainer: [iYato](https://github.com/iYato))
 

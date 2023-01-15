@@ -1,6 +1,6 @@
 /*
  * Bittorrent Client using Qt and libtorrent.
- * Copyright (C) 2021  Mike Tzou (Chocobo1)
+ * Copyright (C) 2022  Vladimir Golovnev <glassez@yandex.ru>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,20 +28,37 @@
 
 #pragma once
 
-#define QBT_VERSION_MAJOR 4
-#define QBT_VERSION_MINOR 4
-#define QBT_VERSION_BUGFIX 5
-#define QBT_VERSION_BUILD 10
-#define QBT_VERSION_STATUS ""  // Should be empty for stable releases!
+#include <QDBusAbstractInterface>
+#include <QDBusPendingReply>
+#include <QDBusReply>
+#include <QStringList>
 
-#define QBT__STRINGIFY(x) #x
-#define QBT_STRINGIFY(x) QBT__STRINGIFY(x)
+class QDBusConnection;
+class QString;
+class QVariant;
 
-#if (QBT_VERSION_BUILD != 0)
-#define PROJECT_VERSION QBT_STRINGIFY(QBT_VERSION_MAJOR.QBT_VERSION_MINOR.QBT_VERSION_BUGFIX.QBT_VERSION_BUILD) QBT_VERSION_STATUS
-#else
-#define PROJECT_VERSION QBT_STRINGIFY(QBT_VERSION_MAJOR.QBT_VERSION_MINOR.QBT_VERSION_BUGFIX) QBT_VERSION_STATUS
-#endif
+class DBusNotificationsInterface final : public QDBusAbstractInterface
+{
+    Q_OBJECT
+    Q_DISABLE_COPY_MOVE(DBusNotificationsInterface)
 
-#define QBT_VERSION "v" PROJECT_VERSION
-#define QBT_VERSION_2 PROJECT_VERSION
+public:
+    inline static const char DBUS_INTERFACE_NAME[] = "org.freedesktop.Notifications";
+
+    DBusNotificationsInterface(const QString &service, const QString &path
+            , const QDBusConnection &connection, QObject *parent = nullptr);
+
+public slots:
+    QDBusPendingReply<QStringList> getCapabilities();
+    QDBusPendingReply<QString, QString, QString, QString> getServerInformation();
+    QDBusReply<QString> getServerInformation(QString &vendor, QString &version, QString &specVersion);
+    QDBusPendingReply<uint> notify(const QString &appName
+            , uint id, const QString &icon, const QString &summary, const QString &body
+            , const QStringList &actions, const QVariantMap &hints, int timeout);
+    QDBusPendingReply<> closeNotification(uint id);
+
+signals:
+    // Signal names must exactly match the ones from corresponding D-Bus interface
+    void ActionInvoked(uint id, const QString &action);
+    void NotificationClosed(uint id, uint reason);
+};
